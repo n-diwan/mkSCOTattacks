@@ -1,65 +1,65 @@
 package attacks.guesss;
 
 public class Sequence {
-    public int[] SequenceList;
+    public int[][] SequenceList;
     public int m;
     public int k;
 
-    public Sequence(int m, int k, int[] SequenceList) {
-        this.m = m;
-        this.k = k;
-        this.SequenceList = SequenceList;
+    public Sequence(int[][] given) {
+
+        this.SequenceList = given;
+        m = given.length;
+        k = given[0].length;
     }
 
-    public int getValue(int i) {
-        return SequenceList[i];
+    public int getValue(int i, int j) {
+        return SequenceList[i][j];
     }
 
     public boolean pass(Sequence other) {
-        boolean[] result = new boolean[m];
-        boolean[] dummyTest = new boolean[k];
+        boolean[] temp = new boolean[k]; // go through every row to see if there's at least one false
+        boolean[] finalCheck = new boolean[m];
+        for (int i = 0; i < m; i++) // go through each column
+        {
 
-        for (int j = 0; j < m; j++) {
-            for (int i = j; i < SequenceList.length; i += m) {
-                if (other.getValue(i) == this.getValue(i)) {
-                    dummyTest[i / m] = true;
+            for (int j = 0; j < k; j++) {
+                if (other.getValue(i, j) == this.getValue(i, j)) {
+                    temp[j] = true;
+                } else {
+                    temp[j] = false;
                 }
             }
-            boolean test = false;
-            for (boolean dummy : dummyTest) {
-                if (dummy) {
-                    test = true;
-                    break;
+            finalCheck[i] = false;
+            for (int j = 0; j < k; j++) {
+                if (temp[j] == true) {
+                    finalCheck[i] = true;
                 }
             }
-            result[j] = test;
         }
-
-        boolean pass = true;
-        for (boolean res : result) {
-            if (!res) {
-                pass = false;
-                break;
+        boolean finalAnswer = true;
+        for (int i = 0; i < m; i++) {
+            if (finalCheck[i] == false) {
+                finalAnswer = false;
             }
         }
-        return pass;
+        return finalAnswer;
+
     }
 
-    private String helpertoString(int p) {
-        StringBuilder s = new StringBuilder();
-        for (int i = p * m; i < m * (p + 1) - 1; i++) {
-            s.append(SequenceList[i]).append(", ");
+    private String helpertoString(int k) {
+        String s = "[";
+        for (int i = 0; i < m - 1; i++) {
+            s += SequenceList[i][k] + ", ";
         }
-        s.append(SequenceList[m * (p + 1) - 1]);
-        return s.toString();
+        s += SequenceList[m - 1][k] + "]";
+        return s;
     }
 
     public String toString() {
-        StringBuilder s = new StringBuilder();
-        for (int i = 0; i < k - 1; i++) {
-            s.append("[").append(helpertoString(i)).append("] ");
+        String s = "";
+        for (int j = 0; j < k; j++) {
+            s += helpertoString(j) + ", ";
         }
-        s.append("[").append(helpertoString(k - 1)).append("]");
-        return s.toString();
+        return s;
     }
 }
